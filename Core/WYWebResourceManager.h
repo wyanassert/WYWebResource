@@ -23,6 +23,7 @@ extern NSString * const kPhotoSubResourceOverlay;
 @interface WYWebResourceManager : NSObject
 
 @property (nonatomic, strong) NSString         *storePath;
+@property (nonatomic, strong) NSArray<NSString *> *cacheTypeList;
 
 + (instancetype)sharedManager;
 

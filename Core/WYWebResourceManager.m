@@ -264,6 +264,13 @@ NSString *const kPhotoSubResourceOverlay                      = @"overlay";
     return _storePath;
 }
 
+- (NSArray<NSString *> *)cacheTypeList {
+    if(!_cacheTypeList) {
+        _cacheTypeList = @[kPhotoSubResourceFont, kPhotoSubResourceImage, kPhotoSubResourceOverlay, kPhotoSubResourceFilter];
+    }
+    return _cacheTypeList;
+}
+
 - (WYWebResourceDownloader *)downloader {
     if(!_downloader) {
         _downloader = [WYWebResourceDownloader sharedDownloader];

@@ -103,7 +103,7 @@ static NSString *kWYWebResourceLocalUrlArray = @"kWYWebResourceLocalUrlArray";
 }
 
 - (BOOL)needSaveToCache {
-    NSArray<NSString *> *cacheList = @[kPhotoSubResourceFont, kPhotoSubResourceImage, kPhotoSubResourceOverlay, kPhotoSubResourceFilter];
+    NSArray<NSString *> *cacheList = [WYWebResourceManager sharedManager].cacheTypeList;
     
     for(NSString *str in cacheList) {
         if([self.subType isEqualToString:str]) {
