@@ -157,6 +157,9 @@ static NSString *const kExecutedCallbackKey = @"executed";
                       }
                     completionHandler:^(NSString * _Nonnull path, BOOL succeeded, NSError * _Nullable error) {
                         __strong typeof(weakSelf)self = weakSelf;
+                        if(!succeeded && !error) {
+                            error = [NSError errorWithDomain:@"SSZipArchive" code:403 userInfo:@{@"message":@"unchieve fail, mayby you should check zip password"}];
+                        }
                         [self callCompletionBlocksWithPath:path success:succeeded error:error];
                         [self done];
                     }];
