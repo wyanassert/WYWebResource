@@ -14,8 +14,11 @@ Download and unzip resource from web server.
 
 ## 引入方法
 	1. 手动导入
-	将Core文件夹重命名为WYWebResource, 再拖到工程中, 添加`AFNetworking`和`SSZipArchive`的引用 
+	将Core文件夹重命名为WYWebResource, 再拖到工程中, 添加`AFNetworking`和`SSZipArchive`的引用
+
 	2. Pod
+
+	pod 'WYWebResource'
 
 ---
 
@@ -26,33 +29,33 @@ Download and unzip resource from web server.
   * 资源包应为一系列文件全选并右键压缩, 请不要放到一个文件夹再对文件夹进行压缩(并没有做这方面的错误处理).
   * 资源包中要有一个`index.json`的文件, 其他的资源也直接放在同一目录下(暂时不支持文件夹嵌套寻找资源).
   * 同种资源的文件名记录在`index.json`中, 资源包的结构与index.json的一个示例如下所示.
-  
+
   **资源包目录**
-  
+
 	```
 	index.json
 	blend.jpg       
-	blend_light2.jpg 
-	blend_light1.jpg 
+	blend_light2.jpg
+	blend_light1.jpg
 	blend_light3.jpg
 	```
-	
-	
-	**index.json**
-	
-	```
-	{
-  "id": "3000",
-  "type": "overlay",
-  "overlay": [
-    	"blend.jpg",
-   	 	"blend_light1.jpg",
-    	"blend_light2.jpg",
-    	"blend_light3.jpg"
-  		]
-	}
-	```
-	* `overlay`中记录了四张图片, 这四张图片在资源包的根目录, 此模块会将这四张图片放在一个`overlay`目录下, 并且将index.json作下处理并返回, 处理之后的字典如下所示(index.json中只有overlay的value会被处理, 还要注意不要存储这个地址, 这个地址是会变动的).
+
+  **index.json**
+
+		```
+		{
+	  	"id": "3000",
+	  	"type": "overlay",
+	  	"overlay": [
+	    	"blend.jpg",
+	   	 	"blend_light1.jpg",
+	    	"blend_light2.jpg",
+	    	"blend_light3.jpg"
+	  		]
+		}
+		```
+
+	`overlay`中记录了四张图片, 这四张图片在资源包的根目录, 此模块会将这四张图片放在一个`overlay`目录下, 并且将`index.json`作下处理并返回, 处理之后的字典如下所示(`index.json`中只有`overlay`的value会被处理, 还要注意不要存储这个地址, 这个地址是会变动的).
 
 	```
 	{
@@ -65,46 +68,46 @@ Download and unzip resource from web server.
         "blend_light3.jpg" : "/var/mobile/Containers/Data/Application/4BD2BE89-EFAA-4D56-90B2-EE25FEFB7FB3/Library/WYWebResource/overlay/blend_light3.jpg"
     };
     }
-    
+
 	```
-	
+
 2. 代码引用
 	* 设定哪些资源需要处理
 		`[WYWebResourceManager sharedManager].cacheTypeList = @[@"overlay", @"image", @"filter", @"font"];`
 		`overlay ` `image ` `filter ` `font ` 就是index.json中需要处理的资源的key名.
 		不设置默认的话是如上四种类型.
 	* 从远程下载 先下载然后解压缩并处理资源
-	
+
 	```
 	[[WYWebResourceManager sharedManager] requestWYWebResource: @"remote URL"
                                                       progress:^(NSProgress *progress, NSURL *targetURL) {
-                                                          
+
                                                       }
                                                     completion:^(NSDictionary * resourceInfo, NSError *error, NSURL *url) {
                                                         NSLog(@"\nresource:\n%@, \nerror:%@, \nurl:%@", resourceInfo, error, url);
                                                     }];
-                                                    
+
 	```
-	
+
 	* 从MainBundle加载
 
 	```
 	NSString *bundlePath = [[NSBundle mainBundle] pathForResource:@"Test" ofType:@"bundle"];
     NSBundle *bundle = [NSBundle bundleWithPath:bundlePath];
     NSString *resourcePath = [bundle pathForResource:@"3000" ofType:@"zip"];
-    
+
     [[WYWebResourceManager sharedManager] requestWYWebResource:[NSURL fileURLWithPath:resourcePath]
                                                       progress:nil
                                                     completion:^(NSDictionary * _Nullable resourceInfo, NSError * _Nonnull error, NSURL * _Nonnull url) {
                                                         NSLog(@"resource:%@, \nerror:%@, \nurl:%@", resourceInfo, error, url);
                                                     }];
 	```
-	
+
 	* 需要解压密码
 
 	```
 	[[WYWebResourceManager sharedManager] requestWYWebResource:[NSURL URLWithString:@"https://firebasestorage.googleapis.com/v0/b/wydemo-93c17.appspot.com/o/zip%2F111.zip?alt=media&token=ca883d44-46e5-4ca7-9f5b-11521b63d293"] zipPw:@"111" progress:nil completion:^(NSDictionary * _Nullable resourceInfo, NSError * _Nonnull error, NSURL * _Nonnull url) {
-        
+
     }];
 	```
 
@@ -121,9 +124,9 @@ Download and unzip resource from web server.
 	```
 	- (instance)initWithStorePath:(NSString *)path folder:(NSString *)name;
 	```
-	
+
 2. 设定需要处理的资源类型
-	
+
 	参数是一个string数组, 每一项表示一个需要处理的资源类型, 比如相片,视频,遮罩等, 此模块会读取压缩包中的`index.json`, 将这些资源放到Cache目录下并返回该资源的地址. 不在这个数组中的数据不会被处理.
 	```
 	@property (nonatomic, strong) NSArray<NSString *> *cacheTypeList;
@@ -167,7 +170,7 @@ Download and unzip resource from web server.
 	- (BOOL)isSubResourceAvailable:(SubResourceType)type subResourceName:(NSString *)resourceName;
 	```
 
-5. 清除某个资源包的缓存(清除功能请谨慎使用, 清楚后应当告诉`XQPhotoDesigner`重新获取资源)
+5. 清除某个资源包的缓存
 
 	删除该资源包, 并根据索引确认是否删除资源文件,
 
