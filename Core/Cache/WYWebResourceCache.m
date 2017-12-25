@@ -164,12 +164,14 @@ static NSString *kWYWebResourceLocalUrlArray = @"kWYWebResourceLocalUrlArray";
 @property (nonatomic, strong, readonly) NSDictionary         *indexJson;
 @property (nonatomic, strong, readonly) NSArray<PhotoSubResourceUnit *> *subUnitArray;
 @property (nonatomic, strong, readonly) NSURL                *url;
+@property (nonatomic, strong, readonly) NSString             *password;
 @property (nonatomic, strong, readonly) NSURL                *zipPath;
 @property (nonatomic, strong, readonly) NSURL                *extractPath;
 @property (nonatomic, strong, readonly) NSURL                *moveToPath;
 
 - (instancetype)initWithIndexJson:(NSDictionary *)indexJson
                               url:(NSURL *)url
+                            zipPw:(NSString *)password
                           zipPath:(NSURL *)zipPath
                       extractPath:(NSURL *)extractPath
                        moveToPath:(NSURL *)moveToPath;
@@ -182,6 +184,7 @@ static NSString *kWYWebResourceLocalUrlArray = @"kWYWebResourceLocalUrlArray";
 
 - (instancetype)initWithIndexJson:(NSDictionary *)indexJson
                               url:(NSURL *)url
+                            zipPw:(NSString *)password
                           zipPath:(NSURL *)zipPath
                       extractPath:(NSURL *)extractPath
                        moveToPath:(NSURL *)moveToPath {
@@ -310,6 +313,7 @@ static NSString *kWYWebResourceLocalUrlArray = @"kWYWebResourceLocalUrlArray";
 }
 
 - (nullable NSOperation *)queryCacheOperationForKey:(nullable NSURL *)url
+                                        zipPassword:(NSString *)password
                                                done:(WYWebResourceCacheQueryBlock _Nullable)doneBlock {
     if(!url) {
         if(doneBlock) {
@@ -369,6 +373,7 @@ static NSString *kWYWebResourceLocalUrlArray = @"kWYWebResourceLocalUrlArray";
                          path:resourceUnit.zipPath
                     extraPath:resourceUnit.extractPath
               moveToDirectory:resourceUnit.moveToPath
+                        zipPw:resourceUnit.password
                    completion:block];
     } else {
         if(block) {
@@ -389,11 +394,13 @@ static NSString *kWYWebResourceLocalUrlArray = @"kWYWebResourceLocalUrlArray";
          fromPath:(NSURL *_Nonnull)resourcePath
  extractDirectory:(NSURL *_Nonnull)extractDir
   moveToDirectory:(NSURL *_Nonnull)moveToDir
+            zipPw:(NSString *)password
        completion:(WYWebResourceCacheQueryBlock _Nullable)block {
     [self extractResource:url
                      path:resourcePath
                 extraPath:extractDir
           moveToDirectory:moveToDir
+                    zipPw:password
                completion:block];
 }
 
@@ -495,14 +502,14 @@ static NSString *kWYWebResourceLocalUrlArray = @"kWYWebResourceLocalUrlArray";
 }
 
 #pragma mark - Private
-- (WYWebResourceCacheToken *)extractResource:(NSURL *)url path:(NSURL *)zipPath extraPath:(NSURL *)extraPath moveToDirectory:(NSURL *_Nonnull)moveToDir completion:(WYWebResourceCacheQueryBlock)block {
+- (WYWebResourceCacheToken *)extractResource:(NSURL *)url path:(NSURL *)zipPath extraPath:(NSURL *)extraPath moveToDirectory:(NSURL *_Nonnull)moveToDir zipPw:(NSString *)password completion:(WYWebResourceCacheQueryBlock)block {
     NSString *extraDir = [self extractResourceToUniqueFile:extraPath.path url:url];
     
     __block WYWebResourceCacheToken *token = nil;
     dispatch_barrier_sync(self.barrierQueue, ^{
         WYWebResourceCacheOperation *operation = self.URLOperations[url];
         if(!operation) {
-            operation = [[WYWebResourceCacheOperation alloc] initWithUrl:url resourcePath:zipPath extractDir:[NSURL fileURLWithPath:extraDir]];
+            operation = [[WYWebResourceCacheOperation alloc] initWithUrl:url resourcePath:zipPath extractDir:[NSURL fileURLWithPath:extraDir] password:password];
             [self.extractQueue addOperation:operation];
             self.URLOperations[url] = operation;
             __weak WYWebResourceCacheOperation *woperation = operation;
@@ -535,7 +542,7 @@ static NSString *kWYWebResourceLocalUrlArray = @"kWYWebResourceLocalUrlArray";
                             if(![indexDict isKindOfClass:[NSDictionary class]] || indexDict.count == 0) {
                                 tmpError = [NSError errorWithDomain:kWYWebResourceCacheErrorDomain code:kWYWebResourceErrorIndexJsonIsEmpty userInfo:@{@"message" : @"index.json contains nothing"}];
                             } else {
-                                WYWebResourceUnit *unit = [[WYWebResourceUnit alloc] initWithIndexJson:indexDict url:url zipPath:zipPath extractPath:extraPath moveToPath:moveToDir];
+                                WYWebResourceUnit *unit = [[WYWebResourceUnit alloc] initWithIndexJson:indexDict url:url zipPw:password zipPath:zipPath extractPath:extraPath moveToPath:moveToDir];
                                 for(PhotoSubResourceUnit *subResourceUnit in unit.subUnitArray) {
                                     if([subResourceUnit needSaveToCache]) {
                                         NSArray *array = [indexDict objectForKey:subResourceUnit.subType];

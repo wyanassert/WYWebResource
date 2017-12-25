@@ -30,6 +30,7 @@ NSString *const kPhotoSubResourceOverlay                      = @"overlay";
 @interface WYWebResourceCombinedOperation : NSObject <WYWebResourceOperation>
 
 @property (strong, nonatomic, nullable) NSURL *url;
+@property (strong, nonatomic, nullable) NSString *zipPassword;
 @property (assign, nonatomic, getter = isCancelled) BOOL cancelled;
 @property (copy  , nonatomic, nullable) WYWebResourceNoParamBlock cancelBlock;
 @property (strong, nonatomic, nullable) NSOperation *cacheOperation;
@@ -86,14 +87,22 @@ NSString *const kPhotoSubResourceOverlay                      = @"overlay";
 - (void)requestWYWebResource:(NSURL *)url
                     progress:(WYWebResourceProgressBlock)progressBlock
                   completion:(WYWebResourceCompletionBlock)completionBlock {
+    [self requestWYWebResource:url
+                         zipPw:nil
+                      progress:progressBlock
+                    completion:completionBlock];
+}
+
+- (void)requestWYWebResource:(NSURL *)url zipPw:(NSString *)password progress:(WYWebResourceProgressBlock)progressBlock completion:(WYWebResourceCompletionBlock)completionBlock {
     __block WYWebResourceCombinedOperation *operation = [WYWebResourceCombinedOperation new];
     __weak WYWebResourceCombinedOperation *weakOperation = operation;
     operation.url = url;
+    operation.zipPassword = password;
     @synchronized (self.runningOperations) {
         [self.runningOperations addObject:operation];
     }
     
-    operation.cacheOperation = [self.cache queryCacheOperationForKey:url done:^(NSDictionary * _Nullable resourceInfo, NSURL * _Nullable url, NSError * _Nullable error) {
+    operation.cacheOperation = [self.cache queryCacheOperationForKey:url zipPassword:password done:^(NSDictionary * _Nullable resourceInfo, NSURL * _Nullable url, NSError * _Nullable error) {
         __strong __typeof(weakOperation) strongOperation = weakOperation;
         if(operation.isCancelled) {
             [self safelyRemoveOperationFromRunning:strongOperation];
@@ -113,6 +122,7 @@ NSString *const kPhotoSubResourceOverlay                      = @"overlay";
                              fromPath:resourcePath
                      extractDirectory:[NSURL fileURLWithPath:[self subResourcePath:kResourceExtractFolder]]
                       moveToDirectory:[NSURL fileURLWithPath:[self downloadWorkspacePath]]
+                                zipPw:password
                            completion:^(NSDictionary * _Nullable resourceInfo, NSURL * _Nullable url, NSError * _Nonnull error) {
                                __strong typeof(weakSelf)self = weakSelf;
                                [self callCompletionBlockForOperation:strongOperation
@@ -133,6 +143,7 @@ NSString *const kPhotoSubResourceOverlay                      = @"overlay";
                                      fromPath:targetURL
                              extractDirectory:[NSURL fileURLWithPath:[self subResourcePath:kResourceExtractFolder]]
                               moveToDirectory:[NSURL fileURLWithPath:[self downloadWorkspacePath]]
+                                        zipPw:password
                                    completion:^(NSDictionary * _Nullable resourceInfo, NSURL * _Nullable url, NSError * _Nonnull error) {
                                        __strong typeof(weakSelf)self = weakSelf;
                                        [self callCompletionBlockForOperation:strongOperation

@@ -23,12 +23,14 @@
 + (instancetype _Nonnull)sharedCache;
 
 - (nullable NSOperation *)queryCacheOperationForKey:(nullable NSURL *)url
+                                        zipPassword:(NSString *_Nullable)password
                                                done:(WYWebResourceCacheQueryBlock _Nullable)doneBlock;
 
 - (void)storeData:(NSURL *_Nonnull)url
          fromPath:(NSURL *_Nonnull)resourcePath
  extractDirectory:(NSURL *_Nonnull)extractDir
   moveToDirectory:(NSURL *_Nonnull)moveToDir
+            zipPw:(NSString *_Nullable)password
        completion:(WYWebResourceCacheQueryBlock _Nullable)block;
 
 - (NSDictionary *_Nullable)resourceInfoFromIndexForKey:(NSURL *_Nonnull)url;

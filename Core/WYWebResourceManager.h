@@ -31,6 +31,11 @@ extern NSString * const kPhotoSubResourceOverlay;
                     progress:(WYWebResourceProgressBlock)progressBlock
                   completion:(WYWebResourceCompletionBlock)completionBlock;
 
+- (void)requestWYWebResource:(NSURL *)url
+                       zipPw:(NSString *)password
+                    progress:(WYWebResourceProgressBlock)progressBlock
+                  completion:(WYWebResourceCompletionBlock)completionBlock;
+
 - (NSDictionary<NSURL *, NSDictionary *> *)localResource:(NSString *)resourceType withCheckFileExist:(BOOL)willCheck;
 
 - (void)cancelRequestForResource:(NSURL *)url;

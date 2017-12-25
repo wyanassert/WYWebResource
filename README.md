@@ -99,6 +99,15 @@ Download and unzip resource from web server.
                                                         NSLog(@"resource:%@, \nerror:%@, \nurl:%@", resourceInfo, error, url);
                                                     }];
 	```
+	
+	* 需要解压密码
+
+	```
+	- (void)requestWYWebResource:(NSURL *)url
+                       zipPw:(NSString *)password
+                    progress:(WYWebResourceProgressBlock)progressBlock
+                  completion:(WYWebResourceCompletionBlock)completionBlock;
+	```
 
 
 ---

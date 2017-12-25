@@ -29,11 +29,12 @@ static NSString *const kExecutedCallbackKey = @"executed";
 @synthesize finished = _finished;
 
 #pragma mark - LifeCycle
-- (instancetype)initWithUrl:(NSURL *)url resourcePath:(NSURL *)resourcePath extractDir:(NSURL *)extractDir {
+- (instancetype)initWithUrl:(NSURL *)url resourcePath:(NSURL *)resourcePath extractDir:(NSURL *)extractDir password:(nonnull NSString *)password {
     if(self = [super init]) {
         _url = url;
         _resourcePath = resourcePath;
         _extractDir = extractDir;
+        _password = password;
         
         _callbackBlocks = [NSMutableArray array];
         _executing = NO;
@@ -149,6 +150,8 @@ static NSString *const kExecutedCallbackKey = @"executed";
         
         [SSZipArchive unzipFileAtPath:self.resourcePath.path
                         toDestination:self.extractDir.path
+                            overwrite:YES
+                             password:self.password
                       progressHandler:^(NSString * _Nonnull entry, unz_file_info zipInfo, long entryNumber, long total) {
                           
                       }

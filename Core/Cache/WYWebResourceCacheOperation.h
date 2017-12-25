@@ -16,10 +16,12 @@ NS_ASSUME_NONNULL_BEGIN
 @property (strong, nonatomic, readonly) NSURL *url;
 @property (strong, nonatomic, readonly) NSURL *resourcePath;
 @property (strong, nonatomic, readonly) NSURL *extractDir;
+@property (nonatomic, strong, readonly) NSString *password;
 
 - (instancetype)initWithUrl:(NSURL *)url
                resourcePath:(NSURL *)resourcePath
-                 extractDir:(NSURL *)extractDir;
+                 extractDir:(NSURL *)extractDir
+                   password:(NSString *)password;
 
 - (WYWebResourceExtractCancelToken _Nonnull)addHandlersForProgress:(void (^)(long entryNumber, long total))progressBlock
                                                           completed:(void (^)(NSString *path, BOOL succeeded, NSError * __nullable error))completedBlock

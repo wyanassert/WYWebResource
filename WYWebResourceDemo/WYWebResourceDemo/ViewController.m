@@ -63,13 +63,17 @@
 }
 
 - (void)exeDownload {
-    [[WYWebResourceManager sharedManager] requestWYWebResource:[self testURL]
-                                                      progress:^(NSProgress *progress, NSURL *targetURL) {
-                                                          
-                                                      }
-                                                    completion:^(NSDictionary * resourceInfo, NSError *error, NSURL *url) {
-                                                        NSLog(@"\nresource:\n%@, \nerror:%@, \nurl:%@", resourceInfo, error, url);
-                                                    }];
+//    [[WYWebResourceManager sharedManager] requestWYWebResource:[self testURL]
+//                                                      progress:^(NSProgress *progress, NSURL *targetURL) {
+//
+//                                                      }
+//                                                    completion:^(NSDictionary * resourceInfo, NSError *error, NSURL *url) {
+//                                                        NSLog(@"\nresource:\n%@, \nerror:%@, \nurl:%@", resourceInfo, error, url);
+//                                                    }];
+    
+    [[WYWebResourceManager sharedManager] requestWYWebResource:[self testURL] zipPw:@"111" progress:nil completion:^(NSDictionary * _Nullable resourceInfo, NSError * _Nonnull error, NSURL * _Nonnull url) {
+        
+    }];
 }
 
 - (void)deleteResource {
@@ -86,7 +90,7 @@
 }
 
 - (NSURL *)testURL {
-    NSURL *result = [NSURL URLWithString:@"https://firebasestorage.googleapis.com/v0/b/wydemo-93c17.appspot.com/o/zip%2F1000.zip?alt=media&token=766cad4a-070f-4cc2-90de-6f7948c7d281"];
+    NSURL *result = [NSURL URLWithString:@"https://firebasestorage.googleapis.com/v0/b/wydemo-93c17.appspot.com/o/zip%2F111.zip?alt=media&token=ca883d44-46e5-4ca7-9f5b-11521b63d293"];
     return result;
 }
 
