@@ -103,12 +103,12 @@ Download and unzip resource from web server.
 	* 需要解压密码
 
 	```
-	- (void)requestWYWebResource:(NSURL *)url
-                       zipPw:(NSString *)password
-                    progress:(WYWebResourceProgressBlock)progressBlock
-                  completion:(WYWebResourceCompletionBlock)completionBlock;
+	[[WYWebResourceManager sharedManager] requestWYWebResource:[NSURL URLWithString:@"https://firebasestorage.googleapis.com/v0/b/wydemo-93c17.appspot.com/o/zip%2F111.zip?alt=media&token=ca883d44-46e5-4ca7-9f5b-11521b63d293"] zipPw:@"111" progress:nil completion:^(NSDictionary * _Nullable resourceInfo, NSError * _Nonnull error, NSURL * _Nonnull url) {
+        
+    }];
 	```
 
+**注意 demo中的资源放在Google的Firebase上, 所以,,,**
 
 ---
 ## 代码结构
@@ -131,7 +131,7 @@ Download and unzip resource from web server.
 
 2. 请求资源
 
-	url是访问资源的唯一标志, 会先检测是否有资源的资料, 没有的话去服务器下载, 并解压, 为资源建立索引. 如果找到本地有相关的资源, 则会直接把需要的字体,遮罩等资源的url传出去, 若是这些资源并不全, 则解压源资源包, 更新索引, 并将文件传出去. 若资源包不存在, 则重新冲服务器下载, 并根新资源.
+	url是访问资源的唯一标志, 会先检测是否有资源的资料, 没有的话去服务器下载, 并解压, 为资源建立索引. 如果找到本地有相关的资源, 则会直接把需要的字体,遮罩等资源的url传出去, 若是这些资源并不全, 则解压源资源包, 更新索引, 并将文件传出去. 若资源包不存在, 则重新从服务器下载, 并更新资源.
 
 	```
 	- (void)requestWYWebResourceWithResourceId:(NSURL *)url progress:(BLOCK)progressBlock comloetion:(BLOCK)completionBlock;
@@ -175,7 +175,7 @@ Download and unzip resource from web server.
 	- (void)deleteCache:(NSURL *)url;
 	```
 
-6. 清除所有的缓存(只适合在App启动的时候使用)
+6. 清除所有的缓存, 谨慎使用
 
 	```
 	- (void)deleteAllCache;
@@ -215,8 +215,8 @@ Download and unzip resource from web server.
 	 - (void)cancel:(Token)token;
 	```
 
-2. - (void)start;
-3. - (void)cancel;
+2. \- (void)start;
+3. \- (void)cancel;
 
 ---
 
