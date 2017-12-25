@@ -18,6 +18,7 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     // Do any additional setup after loading the view, typically from a nib.
+    [WYWebResourceManager sharedManager].cacheTypeList = @[@"overlay", @"image", @"filter", @"font"];
     
     {
         UIButton *btn = [[UIButton alloc] initWithFrame:CGRectMake(50, 50, 100, 50)];
@@ -92,7 +93,7 @@
 - (void)testForLocalFile {
     NSString *bundlePath = [[NSBundle mainBundle] pathForResource:@"Test" ofType:@"bundle"];
     NSBundle *bundle = [NSBundle bundleWithPath:bundlePath];
-    NSString *resourcePath = [bundle pathForResource:@"1000" ofType:@"zip"];
+    NSString *resourcePath = [bundle pathForResource:@"3000" ofType:@"zip"];
     
     [[WYWebResourceManager sharedManager] requestWYWebResource:[NSURL fileURLWithPath:resourcePath]
                                                       progress:nil
