@@ -16,7 +16,7 @@ Pod::Spec.new do |s|
   #
 
   s.name         = "WYWebResource"
-  s.version      = "0.0.1"
+  s.version      = "1.0.2"
   s.summary      = "Download and unzip resource from web server."
 
   s.homepage     = "https://github.com/wyanassert/WYWebResource"

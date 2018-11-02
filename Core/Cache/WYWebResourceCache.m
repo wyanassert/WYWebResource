@@ -163,7 +163,7 @@ static NSString *kWYWebResourceLocalUrlArray = @"kWYWebResourceLocalUrlArray";
 
 @property (nonatomic, strong, readonly) NSDictionary         *indexJson;
 @property (nonatomic, strong, readonly) NSArray<PhotoSubResourceUnit *> *subUnitArray;
-@property (nonatomic, strong, readonly) NSURL                *url;
+@property (nonatomic, strong, readonly) NSURL                *url;//原始 URL , 每次启动 app 路径后会发生变化, 请不要使用
 @property (nonatomic, strong, readonly) NSString             *password;
 @property (nonatomic, strong, readonly) NSURL                *zipPath;
 @property (nonatomic, strong, readonly) NSURL                *extractPath;
@@ -647,7 +647,13 @@ static NSString *kWYWebResourceLocalUrlArray = @"kWYWebResourceLocalUrlArray";
 
 - (NSString *)keyForIndexDict:(NSURL *)url {
     if(url.isFileURL) {
-        NSString *tmpKey = [url.absoluteString stringByRelativeMianBundle];
+        NSString *tmpKey = nil;
+        if([url.absoluteString containsString:NSHomeDirectory()]) {
+            tmpKey = [url.absoluteString stringByRelativeToHome];
+        } else {
+            tmpKey = [url.absoluteString stringByRelativeMianBundle];
+        }
+        
         if([self.localUrlArray indexOfObject:tmpKey] == NSNotFound) {
             [self.localUrlArray addObject:tmpKey];
             [[NSUserDefaults standardUserDefaults] setObject:self.localUrlArray forKey:kWYWebResourceLocalUrlArray];
