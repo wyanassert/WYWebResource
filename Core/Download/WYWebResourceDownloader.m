@@ -10,6 +10,9 @@
 #import "AFNetworking.h"
 #import "WYWebResourceDownloadOperation.h"
 
+@implementation WYWebResourceDownloadToken
+@end
+
 @interface WYWebResourceDownloader()
 
 @property (strong, nonatomic, nonnull ) NSOperationQueue *downloadQueue;
@@ -127,6 +130,7 @@
 
         WYWebResourceDownloadCancelToken downloadCancelToken = [operation addHandlersForProgress:progressBlock
                                                                                        completed:downloadBlock];
+        token = [WYWebResourceDownloadToken new];
         token.url = url;
         token.downloadOperationCancelToken = downloadCancelToken;
     });
